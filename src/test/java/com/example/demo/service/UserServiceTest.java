@@ -5,17 +5,19 @@ import com.example.demo.model.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.MockitoAnnotations.openMocks;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @Mock
@@ -27,9 +29,8 @@ public class UserServiceTest {
 
     private UserService userServiceUnderTest;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        openMocks(this);
         userServiceUnderTest = new UserService(mockUserRepository,
                                                mockRoleRepository,
                                                mockBCryptPasswordEncoder);
@@ -40,9 +41,14 @@ public class UserServiceTest {
                 .email("test@test.com")
                 .build();
 
-        Mockito.when(mockUserRepository.save(any()))
+        /**
+         * we use the static method Mockito.lenient() to enable the lenient stubbing on the add method of our mock list.
+         * Lenient stubs bypass “strict stubbing” validation rules. For example, when stubbing is declared as lenient,
+         * it won't be checked for potential stubbing problems such as the unnecessary stubbing described earlier.
+         */
+        Mockito.lenient().when(mockUserRepository.save(any()))
                 .thenReturn(user);
-        Mockito.when(mockUserRepository.findByEmail(anyString()))
+        Mockito.lenient().when(mockUserRepository.findByEmail(anyString()))
                 .thenReturn(user);
     }
 
