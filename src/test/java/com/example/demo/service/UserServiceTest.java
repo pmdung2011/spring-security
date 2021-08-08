@@ -36,6 +36,7 @@ public class UserServiceTest {
                                                mockBCryptPasswordEncoder);
         User user = User.builder()
                 .id(1)
+                .userName("testuser")
                 .name("Gustavo")
                 .lastName("Ponce")
                 .email("test@test.com")
@@ -50,6 +51,8 @@ public class UserServiceTest {
                 .thenReturn(user);
         Mockito.lenient().when(mockUserRepository.findByEmail(anyString()))
                 .thenReturn(user);
+        Mockito.lenient().when(mockUserRepository.findByUserName(anyString()))
+                .thenReturn(user);
     }
 
     @Test
@@ -62,6 +65,13 @@ public class UserServiceTest {
 
         // Verify the results
         Assertions.assertEquals(email, result.getEmail());
+    }
+
+    @Test
+    public void findUserByUserName(){
+        final String username = "testuser";
+        final User result = userServiceUnderTest.findUserByUserName(username);
+        Assertions.assertEquals(username, result.getUserName());
     }
 
     @Test
